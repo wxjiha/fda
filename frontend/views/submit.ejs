@@ -1,4 +1,4 @@
-<!-- frontend/views/submit.ejs -->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,8 +36,13 @@
 
     <% if (result) { %>
       <h2>Prediction Result:</h2>
+      <h2>Prediction Result:</h2>
       <p><strong>Prediction:</strong> <%= result.prediction === 1 ? '❌ Fraud' : '✅ Legit' %></p>
       <p><strong>Confidence:</strong> <%= (result.confidence * 100).toFixed(2) %>%</p>
+
+      <% if (result.confidence < 0.7) { %>
+        <p style="color: red; font-weight: bold;">⚠️ Warning: Low confidence in this prediction. Please review carefully!</p>
+      <% } %>
     <% } %>
 
     <hr style="margin: 40px 0;">
@@ -125,3 +130,4 @@
 
 </body>
 </html>
+

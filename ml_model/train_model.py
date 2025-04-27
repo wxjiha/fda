@@ -35,7 +35,7 @@ with open("metrics.txt", "w") as f:
 print("✅ Model trained and saved as model.pkl")
 print("📊 Evaluation metrics written to metrics.txt")
 
-# Confusion matrix plot (optional but impressive)
+# Confusion matrix plot 
 cm = confusion_matrix(y_test, y_pred)
 plt.figure(figsize=(6, 5))
 sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["Legit", "Fraud"], yticklabels=["Legit", "Fraud"])

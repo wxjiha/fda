@@ -1,4 +1,4 @@
-# database/db_config.py
+
 import sqlite3
 
 conn = sqlite3.connect("fraud.db")

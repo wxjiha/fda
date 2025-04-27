@@ -13,13 +13,12 @@ def predict():
     data = request.get_json(force=True)
     features = np.array(data["features"])
 
-    # Adjust feature length to expected count
-    EXPECTED_FEATURE_COUNT = 5  # Change this to 30 if needed
+    EXPECTED_FEATURE_COUNT = 5 
 
     if len(features) > EXPECTED_FEATURE_COUNT:
-        features = features[:EXPECTED_FEATURE_COUNT]  # trim extras
+        features = features[:EXPECTED_FEATURE_COUNT] 
     elif len(features) < EXPECTED_FEATURE_COUNT:
-        features = np.pad(features, (0, EXPECTED_FEATURE_COUNT - len(features)), constant_values=0)  # pad with zeros
+        features = np.pad(features, (0, EXPECTED_FEATURE_COUNT - len(features)), constant_values=0)  
 
     features = features.reshape(1, -1)
 

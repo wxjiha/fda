@@ -8,7 +8,7 @@ const session = require("express-session");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
 const fs = require("fs");
-const csv = require("csv-parser"); // make sure you run: npm install csv-parser
+const csv = require("csv-parser"); 
 
 const upload = multer({ dest: "uploads/" });
 
@@ -44,7 +44,7 @@ app.use(
   })
 );
 
-// ✅ Middleware to make username available in all views
+// Middleware to make username available in all views
 app.use((req, res, next) => {
   res.locals.username = req.session.user?.username || null;
   next();
@@ -143,9 +143,9 @@ app.post("/submit", async (req, res) => {
   const features = featureStr.split(",").map(parseFloat);
 
   try {
-    const response = await axios.post("http://localhost:5000/predict", {
-      features,
-    });
+    const response = await axios.post("http://127.0.0.1:5000/predict", 
+      { features });
+
 
     const prediction = response.data.prediction;
     const confidence = Math.max(...response.data.confidence);
@@ -186,37 +186,34 @@ app.post("/submit-csv", upload.single("csvfile"), async (req, res) => {
 
       for (const features of results) {
         try {
-          const response = await axios.post("http://localhost:5000/predict", { features });
-          
-          console.log("ML Response:", response.data);  // ✅ DEBUG LOG
+          const response = await axios.post("http://127.0.0.1:5000/predict", { features });
 
           const prediction = response.data.prediction;
-          const confidenceScore = Math.max(...response.data.confidence);  // extract highest prob
+          const confidence = Math.max(...response.data.confidence);
+          const featureStr = features.join(",");
 
-          predictions.push({
-            prediction: response.data.prediction,
-            confidence: Math.max(...response.data.confidence) 
-          });
-          console.log("CONFIDENCE:", Math.max(...response.data.confidence));
-          
+          db.run(
+            "INSERT INTO transactions (user_id, features, prediction, confidence) VALUES (?, ?, ?, ?)",
+            [req.session.user.id, featureStr, prediction, confidence]
+          );
 
+          predictions.push({ prediction, confidence });
         } catch (e) {
-          console.error("Prediction failed:", e);
           predictions.push({ prediction: "error", confidence: 0 });
         }
       }
 
-      // Store for download
       req.session.downloadResults = predictions;
 
-      // Render results on the submit page
       res.render("submit", {
         username: req.session.user.username,
         result: null,
         results: predictions
       });
+
     });
 });
+
 
 app.get("/download-report", (req, res) => {
   const results = req.session.downloadResults;

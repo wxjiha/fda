@@ -1,4 +1,3 @@
--- database/schema.sql
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (

@@ -11,6 +11,6 @@ __pycache__/
 # SQLite database
 database/*.db
 
-# Others
+# generic
 .DS_Store
 *.pkl
