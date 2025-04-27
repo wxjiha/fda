@@ -1,0 +1,127 @@
+<!-- frontend/views/submit.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Submit Transaction | FraudAnalytics</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo">
+      <img src="/logo.png" alt="Logo" />
+      FraudAnalytics
+    </div>
+    <% if (username) { %>
+      <div>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/submit">Submit</a>
+        <a href="/fraud-map">Fraud Map</a>
+        <a href="/logout">Logout</a>
+      </div>
+    <% } else { %>
+      <div>
+        <a href="/login">Login</a>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="container">
+
+    <h1>🚀 Submit a Transaction</h1>
+    <form action="/submit" method="POST">
+      <label>Enter comma-separated features:</label><br>
+      <input type="text" name="features" placeholder="0.2,1.5,0.3,..." required />
+      <button type="submit">Predict</button>
+    </form>
+
+    <% if (result) { %>
+      <h2>Prediction Result:</h2>
+      <p><strong>Prediction:</strong> <%= result.prediction === 1 ? '❌ Fraud' : '✅ Legit' %></p>
+      <p><strong>Confidence:</strong> <%= (result.confidence * 100).toFixed(2) %>%</p>
+    <% } %>
+
+    <hr style="margin: 40px 0;">
+
+    <h1>📂 Upload Transactions (CSV)</h1><br>
+    <form action="/submit-csv" method="POST" enctype="multipart/form-data">
+      <input type="file" name="csvfile" accept=".csv" required />
+      <button type="submit">Analyse</button>
+    </form>
+
+    <% if (results) { %>
+      <h2 style="margin-top: 30px;">🔍 Prediction Results</h2>
+      <table>
+        <tr>
+          <th>#</th>
+          <th>Prediction</th>
+          <th>Confidence</th>
+        </tr>
+        <% results.forEach((r, i) => { %>
+          <tr>
+            <td><%= i + 1 %></td>
+            <td><%= r.prediction === 1 ? '❌ Fraud' : '✅ Legit' %></td>
+            <td><%= (r.confidence * 100).toFixed(2) %>%</td>
+          </tr>
+        <% }) %>
+      </table>
+    <% } %>
+
+  </div>
+
+  <% if (results && results.length > 0) { %>
+    <h2 style="margin-top: 30px;">🔍 Prediction Results</h2>
+    <table>
+      <tr>
+        <th>#</th>
+        <th>Prediction</th>
+        <th>Confidence</th>
+        <th>Explanation</th>
+        <th>Feedback</th>
+      </tr>
+      <% results.forEach((r, i) => { %>
+        <tr>
+          <td><%= i + 1 %></td>
+          <td><%= r.prediction === 1 ? '❌ Fraud' : '✅ Legit' %></td>
+          <td><%= (r.confidence * 100).toFixed(2) %>%</td>
+          <td><%= r.explanation %></td>
+          <td>
+            <form action="/feedback" method="POST" class="feedback-form">
+              <input type="hidden" name="index" value="<%= i %>">
+              <input type="hidden" name="prediction" value="<%= r.prediction %>">
+              <button type="submit" name="feedback" value="correct" class="feedback-button">👍</button>
+              <button type="submit" name="feedback" value="wrong" class="feedback-button">👎</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </table>
+  <% } %>  
+
+  <% if (results && results.length === 0) { %>
+    <p>No predictions found in your file.</p>
+  <% } %>  
+
+  <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+  
+  <div id="notification" class="notification hidden"></div>
+
+  <script>
+    function showNotification(message, type = "info") {
+      const n = document.getElementById("notification");
+      n.textContent = message;
+      n.className = `notification show ${type}`;
+
+      setTimeout(() => {
+        n.className = "notification hidden";
+      }, 3000);
+    }
+
+    // Example use – show success if results are passed
+    <% if (results) { %>
+      showNotification("✅ Batch prediction complete!", "success");
+    <% } %>
+  </script>
+
+
+</body>
+</html>

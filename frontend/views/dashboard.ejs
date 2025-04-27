@@ -1,0 +1,180 @@
+<!-- frontend/views/dashboard.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard | FraudAnalytics</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo">
+      <img src="/logo.png" alt="Logo" />
+      FraudAnalytics
+    </div>
+    <% if (username) { %>
+      <div>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/submit">Submit</a>
+        <a href="/fraud-map">Fraud Map</a>
+        <a href="/logout">Logout</a>
+      </div>
+    <% } else { %>
+      <div>
+        <a href="/login">Login</a>
+      </div>
+    <% } %>
+  </div>
+  
+  <h1>Welcome Back, <%= username %> !</h1>
+
+  <div class="info-section">
+    <h2>🧠 Understand Fraud Detection</h2>
+    <p>
+      Fraud is any deceptive activity intended to result in financial or personal gain. In online transactions, it often involves unauthorized use of payment information, identity theft, or false claims.
+    </p>
+  
+    <h3>🔍 Common Types of Fraud:</h3>
+    <ul>
+      <li>Phishing scams that steal your login info</li>
+      <li>Credit card fraud using stolen numbers</li>
+      <li>Fake invoices or refund requests</li>
+      <li>Account takeovers through weak passwords</li>
+    </ul>
+  
+    <br>
+    <h3>✅ Tips to Protect Yourself:</h3>
+    <ul>
+      <li>Use strong, unique passwords for every account</li>
+      <li>Don't share sensitive info over email or phone</li>
+      <li>Verify suspicious messages before acting</li>
+      <li>Monitor your transactions regularly</li>
+    </ul>
+  
+    <div class="did-you-know">
+      <h3>💡 Did you know?</h3>
+      <p id="fact">Loading fact...</p>
+    </div>
+    
+    <script>
+      const facts = [
+        "Fraud costs the global economy over $40 billion annually.",
+        "Online scams increased by more than 80% in the past 5 years.",
+        "Most people don’t realise their identity was stolen until 6 months later.",
+        "One in ten adults falls victim to fraud each year.",
+        "Phishing emails account for over 90% of all cyberattacks."
+      ];
+    
+      let current = 0;
+      function rotateFact() {
+        document.getElementById("fact").innerText = facts[current];
+        current = (current + 1) % facts.length;
+      }
+      rotateFact(); // show first fact
+      setInterval(rotateFact, 5000); // rotate every 5 seconds
+    </script>
+    
+    <br>
+    <div class="highlight-section">
+      <h2>🔐 That's Where We Come In!</h2>
+      <p>
+        Our software has been trained to detect not only general fraudulent trends but also irregularities specific to your own transaction history. Our refined model analyses patterns and discrepancies, giving you clear, accurate results on whether a transaction is potentially risky or just a little suspicious.
+      </p>
+      <p>
+        Don’t worry — we’ve done the hard work. You just use the software. We’ve got your back!
+      </p>
+    
+      <div class="cta-button">
+        <a href="/submit">🚀 Submit a Transaction</a>
+      </div>
+    </div>
+    
+    <div class="learn-more">
+      <h3>📘 Want to Learn More?</h3>
+      <p>
+        Visit <a href="https://www.actionfraud.police.uk/" target="_blank">Action Fraud UK</a> – the UK’s national reporting centre for fraud and cybercrime.
+      </p>
+    </div>
+
+    
+    <h2>📊 Transaction Summary</h2>
+    <form method="GET" action="/dashboard" class="filter-form">
+      <label for="range">📅 Show:</label>
+      <select name="range" id="range" onchange="this.form.submit()">
+        <option value="all" <%= selectedRange === 'all' ? 'selected' : '' %>>All Time</option>
+        <option value="7" <%= selectedRange === '7' ? 'selected' : '' %>>Last 7 Days</option>
+        <option value="30" <%= selectedRange === '30' ? 'selected' : '' %>>Last 30 Days</option>
+      </select>
+    </form>
+
+    <% if (transactions.length === 0) { %>
+      <p>No transactions submitted yet.</p>
+    <% } else { %>
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Prediction</th>
+          <th>Confidence</th>
+          <th>Date</th>
+        </tr>
+        <% transactions.forEach(t => { %>
+          <tr>
+            <td><%= t.id %></td>
+            <td><%= t.prediction === 1 ? 'Fraud' : 'Legit' %></td>
+            <td><%= (t.confidence * 100).toFixed(2) %>%</td>
+            <td><%= t.created_at %></td>
+          </tr>
+        <% }) %>
+      </table>
+    <% } %>
+    <div class="chart-section">
+      <h2>📊 Summary Chart</h2>
+      <canvas id="fraudChart" width="400" height="400"></canvas>
+    </div>
+    
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+      const ctx = document.getElementById("fraudChart").getContext("2d");
+      const fraudChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: ["Legitimate", "Fraudulent"],
+          datasets: [{
+            data: [<%= legitCount %>, <%= fraudCount %>],
+            backgroundColor: ["#28a745", "#dc3545"],
+            hoverOffset: 20
+          }]
+        },
+        options: {
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: {
+                  size: 14
+                }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const total = <%= legitCount %> + <%= fraudCount %>;
+                  const value = context.parsed;
+                  const percentage = ((value / total) * 100).toFixed(1);
+                  return `${context.label}: ${value} (${percentage}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    </script>
+    
+    <form action="/download-report" method="GET">
+      <button type="submit">📥 Download CSV Report</button>
+    </form>    
+    
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+# Node.js
+node_modules/
+uploads/
+.env
+
+# Python
+ml_model/venv/
+__pycache__/
+*.pyc
+
+# SQLite database
+database/*.db
+
+# Others
+.DS_Store
+*.pkl

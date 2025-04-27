@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fraud Risk Map</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo">
+    <img src="/logo.png" alt="Logo" />
+    FraudAnalytics
+  </div>
+  <div>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/submit">Submit</a>
+    <a href="/fraud-map">Fraud Map</a>
+    <a href="/logout">Logout</a>
+  </div>
+</div>
+
+<div class="container">
+  <h1>🌍 Fraud Risk Map</h1>
+
+
+  <div class="container" style="margin-bottom: 20px;">
+    <h2>About the Fraud Risk Map 🌍</h2>
+    <p>
+      The Fraud Risk Map visualises the locations of recent transactions submitted through the system. 
+      Each circle represents a transaction, coloured according to the risk level associated with the location.
+      The system uses predefined risk levels for major global cities based on historic fraud trends.
+    </p>
+    <p>
+      By viewing the map, users can identify high-risk regions where fraudulent transactions are more likely to occur.
+      This helps raise awareness about geographic fraud patterns and enhances decision-making when reviewing suspicious activity.
+    </p>
+  
+    <h3>Map Key 🗺️</h3>
+    <ul style="list-style-type: none; padding-left: 0;">
+      <li><span style="color: red;">🟥 Red</span> — High Risk Region (e.g., Lagos, New York)</li>
+      <li><span style="color: orange;">🟧 Orange</span> — Medium Risk Region (e.g., London)</li>
+      <li><span style="color: green;">🟩 Green</span> — Low Risk Region (e.g., Tokyo, Berlin)</li>
+    </ul>
+  
+    <p style="font-style: italic;">
+      (Click on each marker to see the transaction prediction and details.)
+    </p>
+  </div>
+  
+
+  <div id="map" style="height: 600px;"></div>
+</div>
+
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  const transactions = <%- JSON.stringify(transactions) %>;
+
+  const map = L.map('map').setView([20, 0], 2); // Center of world
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+  const riskLevels = {
+    "New York": "high",
+    "London": "medium",
+    "Tokyo": "low",
+    "Lagos": "high",
+    "Berlin": "low"
+  };
+
+  transactions.forEach(tx => {
+  const loc = tx.location;
+  if (!loc) return;
+
+  let color = "green";
+  if (riskLevels[loc] === "high") color = "red";
+  if (riskLevels[loc] === "medium") color = "orange";
+
+  const coordinates = {
+    "New York": [40.7128, -74.0060],
+    "London": [51.5072, -0.1276],
+    "Tokyo": [35.682839, 139.759455],
+    "Lagos": [6.5244, 3.3792],
+    "Berlin": [52.5200, 13.4050],
+    "Paris": [48.8566, 2.3522],
+    "Johannesburg": [-26.2041, 28.0473],
+    "Sydney": [-33.8688, 151.2093],
+    "São Paulo": [-23.5505, -46.6333],
+    "Toronto": [43.651070, -79.347015],
+    "Mumbai": [19.0760, 72.8777],
+    "Madrid": [40.4168, -3.7038],
+    "Dubai": [25.276987, 55.296249]
+  };
+
+  const latlng = coordinates[loc]; 
+
+  if (latlng) {
+    L.circle(latlng, {
+      color: color,
+      fillColor: color,
+      fillOpacity: 0.5,
+      radius: 50000
+    }).addTo(map)
+      .bindPopup(`Location: ${loc}<br>Prediction: ${tx.prediction == 1 ? '❌ Fraud' : '✅ Legit'}`);
+  }
+});
+</script>
+
+</body>
+</html>
