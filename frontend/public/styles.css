@@ -1,9 +1,10 @@
-
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
+
+/*base body styling*/
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f0f2f5;
@@ -38,7 +39,7 @@ body {
   margin-right: 10px;
 }
 
-/* Container */
+/* page ontainer styling*/
 .container {
   max-width: 800px;
   margin: 40px auto;
@@ -48,7 +49,7 @@ body {
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* Forms */
+/* forms styling*/
 form {
   display: flex;
   flex-direction: column;
@@ -70,7 +71,7 @@ button:hover {
   background-color: #002b5c;
 }
 
-/* Table */
+/* table styling*/
 table {
   width: 100%;
   border-collapse: collapse;
@@ -84,7 +85,7 @@ th {
   background-color: #f7f7f7;
 }
 
-/* Mobile Layout */
+/* reponsive mobile layout */
 @media screen and (max-width: 600px) {
   .container {
     margin: 20px;
@@ -99,6 +100,7 @@ th {
   }
 }
 
+/*information section*/
 .info-section {
   margin-top: 30px;
   background: #f9f9f9;
@@ -121,6 +123,7 @@ th {
   list-style: disc;
 }
 
+/*did you know box*/
 .did-you-know {
   margin-top: 30px;
   background-color: #fff9e6;
@@ -134,6 +137,7 @@ th {
   color: #b07600;
 }
 
+/*highlight box*/
 .highlight-section {
   background-color: #f0f8ff;
   border-left: 5px solid #007bff;
@@ -148,6 +152,7 @@ th {
   color: #004080;
 }
 
+/*call to action buttoon*/
 .cta-button a {
   display: inline-block;
   margin-top: 15px;
@@ -164,6 +169,7 @@ th {
   background-color: #0056b3;
 }
 
+/*learn more box*/
 .learn-more {
   margin-top: 30px;
   background-color: #fff9e6;
@@ -176,6 +182,7 @@ th {
   color: #b07600;
 }
 
+/*error banner*/
 .error-banner {
   background-color: #f8d7da;
   color: #842029;
@@ -187,6 +194,7 @@ th {
   font-weight: bold;
 }
 
+/*chart*/
 .chart-section {
   max-width: 600px;
   margin: 50px auto;
@@ -197,6 +205,7 @@ th {
   text-align: center;
 }
 
+/*filter dropdown styling*/
 .filter-form {
   text-align: right;
   margin-bottom: 20px;
@@ -212,6 +221,7 @@ button {
   margin-top: 10px;
 }
 
+/*notification popup*/
 .notification {
   position: fixed;
   top: 20px;
@@ -233,10 +243,13 @@ button {
   opacity: 0;
   transform: translateY(-20px);
 }
+
+/*types of notifications*/
 .notification.success { background: #28a745; }
 .notification.error { background: #dc3545; }
 .notification.info { background: #17a2b8; }
 
+/*feedback buttons*/
 .feedback-button {
   border: none;
   background: none;
@@ -257,6 +270,7 @@ button {
   font-weight: bold;
 }
 
+/*back link styling*/
 .back-link:hover {
   text-decoration: underline;
 }
